@@ -1,0 +1,5 @@
+package: .
+import:
+- package: github.com/gorilla/mux
+- package: github.com/wfchiang/davic
+  version: v0.1.2

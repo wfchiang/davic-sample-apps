@@ -8,11 +8,10 @@ import (
 	"github.com/gorilla/mux"
 	"encoding/json"
 	"io/ioutil"
-	"wfchiang/davic"
+	"github.com/wfchiang/davic"
 )
 
-var OPT_DAVIC = []interface{}{}
-var HISTORY_OPT_DAVIC = []interface{}{}
+var LIST_OPT_DAVIC = []interface{}{}
 var DATA_HEROS = map[string]interface{}{}
 var DATA_POWERS = map[string]interface{}{}
 
@@ -104,14 +103,13 @@ Davic handlers
 func davicUnsetHandler (http_resp http.ResponseWriter, http_reqt *http.Request) {
 	defer recoverFromPanic(http_resp, "davic/unset")
 
-	if (len(HISTORY_OPT_DAVIC) > 0) {
-		OPT_DAVIC = davic.CastInterfaceToArray(HISTORY_OPT_DAVIC[len(HISTORY_OPT_DAVIC)-1])
-		HISTORY_OPT_DAVIC = HISTORY_OPT_DAVIC[0:len(HISTORY_OPT_DAVIC)-1]
+	if (len(LIST_OPT_DAVIC) > 0) {
+		popped_opt := davic.CastInterfaceToArray(LIST_OPT_DAVIC[len(LIST_OPT_DAVIC)-1])
+		LIST_OPT_DAVIC = LIST_OPT_DAVIC[0:len(LIST_OPT_DAVIC)-1]
+		log.Println(fmt.Sprintf("[davic unset] Popped Operation: %v", popped_opt))
 	}
 	
 	log.Println("Davic/Unset is Hit!")
-
-	log.Println(fmt.Sprintf("[davic unset] Operation: %v", OPT_DAVIC))
 }
 
 func davicSetHandler (http_resp http.ResponseWriter, http_reqt *http.Request) {
@@ -122,14 +120,13 @@ func davicSetHandler (http_resp http.ResponseWriter, http_reqt *http.Request) {
 		panic("Failed to read the request body")
 	}
 
-	var draft_opt_davic []interface{}
-	json.Unmarshal(bytes_reqt_body, &draft_opt_davic)
+	var opt_davic []interface{}
+	json.Unmarshal(bytes_reqt_body, &opt_davic)
 
-	HISTORY_OPT_DAVIC = append(HISTORY_OPT_DAVIC, davic.CopyValue(OPT_DAVIC))
-	OPT_DAVIC = draft_opt_davic
+	LIST_OPT_DAVIC = append(LIST_OPT_DAVIC, opt_davic)
 	log.Println("Davic/Set is Hit!")
 
-	log.Println(fmt.Sprintf("[davic set] Operation: %v", OPT_DAVIC))
+	log.Println(fmt.Sprintf("[davic set] Operation List: %v", LIST_OPT_DAVIC))
 }
 
 func davicGoHandler (http_resp http.ResponseWriter, http_reqt *http.Request) {
@@ -146,7 +143,7 @@ func davicGoHandler (http_resp http.ResponseWriter, http_reqt *http.Request) {
 	env.Store = reqt_obj
 
 	// Prepare the operation 
-	env = davic.Execute(env, OPT_DAVIC)
+	env = davic.Execute(env, LIST_OPT_DAVIC)
 	davic_result := env.Store
 	log.Println(fmt.Sprintf("[davic] Result: %v", davic_result))
 
