@@ -1,0 +1,25 @@
+{
+    "title": "powers",
+    "data": [
+        {
+            "id": 0,
+            "name": "rich",
+            "level": 1000000
+        },
+        {
+            "id": 1,
+            "name": "technology",
+            "level": 2
+        },
+        {
+            "id": 2,
+            "name": "stength",
+            "level": 12.3
+        },
+        {
+            "id": 3,
+            "name": "always angry",
+            "level": 1357.9
+        }
+    ]
+}
