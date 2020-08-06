@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"github.com/wfchiang/davic"
+	"runtime/debug"
 )
 
 var LIST_OPT_DAVIC = []interface{}{}
@@ -38,6 +39,7 @@ func recoverFromPanic (http_resp http.ResponseWriter, id_service string) {
 	if r := recover(); r != nil {
 		err_message := fmt.Sprintf("%v", r)
 		log.Println(fmt.Sprintf("[%s] %s", id_service, err_message))
+		log.Println(fmt.Sprintf("Stack trace:\n%s", string(debug.Stack())))
 		http_resp.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(http_resp, err_message)
 	}
@@ -52,6 +54,8 @@ func getHeroHandler (http_resp http.ResponseWriter, http_reqt *http.Request) {
 	if (err != nil) {
 		panic(fmt.Sprintf("Invalid id %v", err))
 	}
+
+	http_resp.Header().Add("Content-Type", "application/json")
 
 	list_heros := davic.CastInterfaceToArray(DATA_HEROS["data"])
 	found_hero := false 
@@ -78,6 +82,8 @@ func getPowerHandler (http_resp http.ResponseWriter, http_reqt *http.Request) {
 	if (err != nil) {
 		panic(fmt.Sprintf("Invalid id %v", err))
 	}
+
+	http_resp.Header().Add("Content-Type", "application/json")
 
 	list_powers := davic.CastInterfaceToArray(DATA_POWERS["data"])
 	found_power := false
@@ -136,6 +142,8 @@ func davicGoHandler (http_resp http.ResponseWriter, http_reqt *http.Request) {
 	if err != nil {
 		panic("Failed to read the request body")
 	}
+
+	http_resp.Header().Add("Content-Type", "application/json")
 
 	// Initialize the Davic environment 
 	reqt_obj := davic.CreateObjFromBytes(bytes_reqt_body)

@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"io/ioutil"
-	"wfchiang/davic"
+	"github.com/wfchiang/davic"
 )
 
 var OPT_HI2YOU = []interface{}{}
